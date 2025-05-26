@@ -1,0 +1,19 @@
+{
+    "name": "seunome/php-api-project",
+    "type": "project",
+    "require": {
+        "slim/slim": "0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Seunome\\PhpApiProject\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "caio henrique"
+        }
+    ],
+    "minimum-stability": "stable"
+}
