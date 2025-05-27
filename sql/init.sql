@@ -1,0 +1,17 @@
+CREATE DATABASE IF NOT EXISTS php_api;
+USE php_api;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100),
+  email VARCHAR(100)
+);
+
+DELIMITER $$
+
+CREATE PROCEDURE create_user(IN p_name VARCHAR(100), IN p_email VARCHAR(100))
+BEGIN
+  INSERT INTO users (name, email) VALUES (p_name, p_email);
+END $$
+
+DELIMITER ;
