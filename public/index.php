@@ -1,31 +1,29 @@
 <?php
-// Carrega o autoloader do Composer (para usar classes com PSR-4)
-require __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-// Usa o namespace da controller que vamos chamar
-use \PhpApiProject\Controllers\UserController;
+use PhpApiProject\Controllers\UserController;
 
-// Obtém a URI da requisição (ex: /users)
+// Simples roteamento baseado na URL e método
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-// Obtém o método HTTP usado (GET, POST, etc.)
 $method = $_SERVER['REQUEST_METHOD'];
 
-// Define o cabeçalho da resposta como JSON
-header('Content-Type: application/json');
+$controller = new UserController();
 
-// Roteamento manual básico: se for GET em /users
+// Roteamento básico
 if ($uri === '/users' && $method === 'GET') {
-    // Chama o método index() do UserController
-    (new UserController())->index();
-
-// Se for POST em /users
+    $controller->index();
+} elseif (preg_match('/\/users\/(\d+)/', $uri, $matches)) {
+    $id = $matches[1];
+    if ($method === 'GET') {
+        $controller->show($id);
+    } elseif ($method === 'PUT') {
+        $controller->update($id);
+    } elseif ($method === 'DELETE') {
+        $controller->delete($id);
+    }
 } elseif ($uri === '/users' && $method === 'POST') {
-    // Chama o método store() do UserController
-    (new UserController())->store();
-
-// Qualquer outra rota: erro 404
+    $controller->store();
 } else {
-    http_response_code(404); // Código HTTP 404 - não encontrado
-    echo json_encode(['error' => 'Rota não encontrada']); // Mensagem em JSON
+    http_response_code(404);
+    echo json_encode(['error' => 'Rota não encontrada']);
 }

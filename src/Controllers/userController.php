@@ -1,30 +1,74 @@
 <?php
-// Define o namespace da classe
-namespace Seunome\PhpApiProject\Controllers;
+namespace PhpApiProject\Controllers;
 
-// Usa a classe de serviço de usuários
-use \PhpApiProject\Services\UserService;
+use PhpApiProject\Services\UserService;
 
 class UserController {
 
-    // Método para retornar todos os usuários (GET /users)
     public function index() {
-        // Instancia o serviço de usuários e busca todos os registros
         $users = (new UserService())->getAll();
 
-        // Retorna os dados em formato JSON
-        echo json_encode($users);
+        echo json_encode(['success' => true, 'data' => $users]);
     }
 
-    // Método para criar um novo usuário (POST /users)
+    public function show($id) {
+        $user = (new UserService())->getById($id);
+
+        if ($user) {
+            echo json_encode(['success' => true, 'data' => $user]);
+        } else {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => ['message' => 'Usuário não encontrado']]);
+        }
+    }
+
     public function store() {
-        // Lê os dados JSON enviados no corpo da requisição
         $data = json_decode(file_get_contents('php://input'), true);
 
-        // Cria o novo usuário com os dados recebidos
-        $result = (new UserService())->create($data['name'], $data['email']);
+        if (empty($data['name']) || empty($data['email']) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => ['message' => 'Nome e email válidos são obrigatórios']]);
+            return;
+        }
 
-        // Retorna sucesso (ou falha) em JSON
-        echo json_encode(['success' => $result]);
+        $created = (new UserService())->create($data['name'], $data['email']);
+
+        if ($created) {
+            http_response_code(201);
+            echo json_encode(['success' => true, 'message' => 'Usuário criado com sucesso']);
+        } else {
+            http_response_code(500);
+            echo json_encode(['success' => false, 'error' => ['message' => 'Erro ao criar usuário']]);
+        }
+    }
+
+    public function update($id) {
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (empty($data['name']) || empty($data['email'])) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => ['message' => 'Nome e email são obrigatórios']]);
+            return;
+        }
+
+        $updated = (new UserService())->update($id, $data['name'], $data['email']);
+
+        if ($updated) {
+            echo json_encode(['success' => true, 'message' => 'Usuário atualizado com sucesso']);
+        } else {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => ['message' => 'Usuário não encontrado']]);
+        }
+    }
+
+    public function delete($id) {
+        $deleted = (new UserService())->delete($id);
+
+        if ($deleted) {
+            echo json_encode(['success' => true, 'message' => 'Usuário removido com sucesso']);
+        } else {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'error' => ['message' => 'Usuário não encontrado']]);
+        }
     }
 }

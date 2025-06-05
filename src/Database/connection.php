@@ -1,6 +1,6 @@
 <?php
 // Define o namespace da classe
-namespace Seunome\PhpApiProject\Database;
+namespace PhpApiProject\Database;
 
 // Importa a classe PDO do PHP para usar conexão com banco
 use PDO;

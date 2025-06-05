@@ -1,5 +1,5 @@
 {
-    "name": "seunome/php-api-project",
+    "name": "caio/php-api-project",
     "type": "project",
     "require": {
         "slim/slim": "0"
@@ -7,7 +7,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Seunome\\PhpApiProject\\": "src/"
+            "caio\\PhpApiProject\\": "src/"
         }
     },
     "authors": [

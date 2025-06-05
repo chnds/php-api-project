@@ -1,30 +1,33 @@
+// src/Services/UserService.php
 <?php
-// Define o namespace da classe
-namespace Seunome\PhpApiProject\Services;
+namespace PhpApiProject\Services;
 
-// Usa a classe responsável pela conexão com o banco
-use Seunome\PhpApiProject\Database\Connection;
+use PhpApiProject\Models\UserModel;
 
 class UserService {
+    private $userModel;
 
-    // Método para retornar todos os usuários do banco
-    public function getAll(): array {
-        // Pega a instância do PDO (conexão com o banco)
-        $pdo = Connection::get();
-
-        // Executa uma consulta SQL simples
-        return $pdo->query('SELECT * FROM users')->fetchAll(\PDO::FETCH_ASSOC);
+    public function __construct() {
+        $this->userModel = new UserModel();
     }
 
-    // Método para criar um novo usuário no banco usando procedure
-    public function create(string $name, string $email): bool {
-        // Pega a conexão com o banco
-        $pdo = Connection::get();
+    public function getAll() {
+        return $this->userModel->all();
+    }
 
-        // Prepara a chamada da procedure SQL com parâmetros
-        $stmt = $pdo->prepare("CALL create_user(:name, :email)");
+    public function getById($id) {
+        return $this->userModel->find($id);
+    }
 
-        // Executa a procedure passando os valores
-        return $stmt->execute(['name' => $name, 'email' => $email]);
+    public function create($name, $email) {
+        return $this->userModel->create($name, $email);
+    }
+
+    public function update($id, $name, $email) {
+        return $this->userModel->update($id, $name, $email);
+    }
+
+    public function delete($id) {
+        return $this->userModel->delete($id);
     }
 }
